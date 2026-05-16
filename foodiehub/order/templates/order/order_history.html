@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order History - FoodieHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-red-600 text-white p-4 shadow-md">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="{% url 'menu' %}" class="text-2xl font-bold">🍔 FoodieHub</a>
+            <a href="{% url 'logout' %}" class="font-semibold hover:text-red-200">Logout</a>
+        </div>
+    </nav>
+    <div class="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+        <h2 class="text-3xl font-bold mb-6">Your Past Orders</h2>
+        {% for order in orders %}
+        <div class="border-b p-4 flex justify-between items-center">
+            <div>
+                <p class="font-bold text-lg text-gray-800">Order #{{ order.id }}</p>
+                <p class="text-sm text-gray-500">{{ order.created_at }}</p>
+            </div>
+            <div class="text-right">
+                <p class="font-bold text-green-600 text-xl">₹{{ order.total_amount }}</p>
+                <span class="text-sm bg-orange-100 text-orange-600 px-2 py-1 rounded">{{ order.status }}</span>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-gray-500">No orders yet. Start ordering! 🍕</p>
+        {% endfor %}
+    </div>
+</body>
+</html>

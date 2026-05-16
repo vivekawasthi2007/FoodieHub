@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Cart - FoodieHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-gray-50">
+
+    <nav class="bg-red-600 text-white p-4 shadow-md">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="{% url 'menu' %}" class="text-2xl font-bold">🍔 FoodieHub</a>
+            <span class="font-semibold">Hi, {{ user.username }}</span>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+        <h2 class="text-3xl font-bold mb-6 text-gray-800">Your Shopping Cart</h2>
+        
+        {% if cart_items %}
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b-2 border-gray-200">
+                        <th class="p-3">Item</th>
+                        <th class="p-3">Price</th>
+                        <th class="p-3">Quantity</th>
+                        <th class="p-3">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr class="border-b border-gray-100">
+                        <td class="p-3 font-semibold">{{ item.food_item.name }}</td>
+                        <td class="p-3 text-gray-600">₹{{ item.food_item.price }}</td>
+                        <td class="p-3">{{ item.quantity }}</td>
+                        <td class="p-3 font-bold text-green-600">₹{{ item.total_price }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <div class="mt-8 flex justify-between items-center border-t pt-4">
+                <h3 class="text-2xl font-bold">Grand Total: <span class="text-red-600">₹{{ total_amount }}</span></h3>
+                
+                <button onclick="openPaymentModal()" class="bg-green-500 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-600 shadow-md transition transform hover:scale-105">
+                    Proceed to Pay
+                </button>
+            </div>
+        {% else %}
+            <p class="text-gray-500 text-center text-xl mt-10">Your cart is empty! 🍕</p>
+            <div class="text-center mt-6">
+                <a href="{% url 'menu' %}" class="text-blue-500 font-bold hover:underline">Go back to Menu</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 w-96 transform transition-all">
+            <h3 class="text-2xl font-extrabold mb-4 text-gray-800 text-center border-b pb-3">Payment Method</h3>
+            
+            <div class="space-y-3 mb-6 mt-4">
+                <label class="flex items-center p-3 border-2 rounded-lg cursor-pointer hover:bg-gray-50 border-green-500 bg-green-50">
+                    <input type="radio" name="payment" value="upi" class="form-radio h-5 w-5 text-green-600" checked>
+                    <span class="ml-3 font-bold text-gray-800">UPI (GPay / PhonePe)</span>
+                    <span class="ml-auto text-2xl">📱</span>
+                </label>
+                <label class="flex items-center p-3 border-2 rounded-lg cursor-pointer hover:bg-gray-50 border-gray-200">
+                    <input type="radio" name="payment" value="card" class="form-radio h-5 w-5 text-blue-600">
+                    <span class="ml-3 font-bold text-gray-800">Credit/Debit Card</span>
+                    <span class="ml-auto text-2xl">💳</span>
+                </label>
+                <label class="flex items-center p-3 border-2 rounded-lg cursor-pointer hover:bg-gray-50 border-gray-200">
+                    <input type="radio" name="payment" value="cod" class="form-radio h-5 w-5 text-gray-600">
+                    <span class="ml-3 font-bold text-gray-800">Cash on Delivery</span>
+                    <span class="ml-auto text-2xl">💵</span>
+                </label>
+            </div>
+
+            <div class="flex justify-between items-center mt-6">
+                <button onclick="closePaymentModal()" class="text-gray-500 font-bold hover:text-red-500 transition">Cancel</button>
+                <button onclick="processPayment()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 shadow-md transition">
+                    Pay ₹{{ total_amount }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal खोलने का फंक्शन
+        function openPaymentModal() {
+            document.getElementById('paymentModal').classList.remove('hidden');
+        }
+
+        // Modal बंद करने का फंक्शन
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.add('hidden');
+        }
+
+        // पेमेंट प्रोसेस करने का फंक्शन
+        function processPayment() {
+            // पहले Modal बंद करें
+            closePaymentModal();
+
+            // SweetAlert का शानदार Success Popup दिखाएं
+            Swal.fire({
+                title: 'Payment Successful! 🎉',
+                text: 'Your order is being placed...',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 2000, // 2 सेकंड तक दिखेगा
+                timerProgressBar: true,
+                backdrop: `rgba(0,0,0,0.6)`
+            }).then(() => {
+                // 2 सेकंड बाद बैकएंड पर भेज दें जहाँ असली आर्डर जनरेट होगा
+                window.location.href = "{% url 'checkout' %}";
+            });
+        }
+    </script>
+
+</body>
+</html>

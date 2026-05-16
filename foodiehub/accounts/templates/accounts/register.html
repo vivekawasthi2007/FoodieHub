@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register - FoodieHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* यह इनपुट बॉक्स बनाएगा और फालतू टेक्स्ट छुपाएगा */
+        input { 
+            border: 2px solid #d1d5db !important; 
+            padding: 8px !important; 
+            width: 100%; 
+            border-radius: 6px; 
+            margin-bottom: 10px;
+        }
+        input:focus { border-color: #ef4444 !important; outline: none; }
+        .helptext { display: none; } /* पासवर्ड के फालतू रूल्स को छुपाने के लिए */
+        ul.errorlist { color: red; font-size: 14px; margin-bottom: 10px; }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-xl w-96">
+        <h2 class="text-2xl font-bold mb-6 text-center text-red-600">Create Account</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="mb-4 text-gray-700 font-medium">
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="w-full bg-green-500 text-white font-bold py-2 mt-2 rounded hover:bg-green-600 transition">Register</button>
+        </form>
+        <p class="mt-4 text-sm text-center">Already have an account? <a href="{% url 'login' %}" class="text-blue-500 font-semibold hover:underline">Login here</a></p>
+    </div>
+</body>
+</html>

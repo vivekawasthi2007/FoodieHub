@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Favorites - FoodieHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+
+    <nav class="bg-red-600 text-white p-4 shadow-md">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="{% url 'menu' %}" class="text-2xl font-bold">🍔 FoodieHub</a>
+            <a href="{% url 'menu' %}" class="font-semibold hover:text-red-200">Back to Menu</a>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto mt-10 p-4">
+        <h2 class="text-3xl font-extrabold text-gray-800 mb-8 text-center">My Favorite Foods ❤️</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% for wish_item in wishlist_items %}
+            <div class="bg-white rounded-lg shadow-lg p-5 border border-red-100">
+                <div class="flex justify-between items-start">
+                    <h3 class="text-xl font-bold text-gray-800">{{ wish_item.food_item.name }}</h3>
+                    <a href="{% url 'toggle_wishlist' wish_item.food_item.id %}" class="text-2xl hover:scale-125 transition transform">❤️</a>
+                </div>
+                <p class="text-sm text-gray-500 mt-2 h-10">{{ wish_item.food_item.description }}</p>
+                <div class="mt-4 flex justify-between items-center">
+                    <span class="text-2xl font-extrabold text-green-600">₹{{ wish_item.food_item.price }}</span>
+                    <a href="{% url 'add_to_cart' wish_item.food_item.id %}">
+                        <button class="bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 transition">Add to Cart</button>
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+                <div class="col-span-3 text-center mt-10">
+                    <p class="text-xl text-gray-500">You haven't liked any food yet! 💔</p>
+                    <a href="{% url 'menu' %}" class="text-blue-500 font-bold hover:underline block mt-2">Explore Menu</a>
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+
+</body>
+</html>

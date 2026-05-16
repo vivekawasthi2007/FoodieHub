@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Status - FoodieHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex flex-col min-h-screen">
+
+    <nav class="bg-red-600 text-white p-4 shadow-md">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="{% url 'menu' %}" class="text-2xl font-bold">🍔 FoodieHub</a>
+            <span class="font-semibold">Order Tracking</span>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-lg w-full mx-auto mt-16 p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-xl text-center border border-gray-100">
+            <h2 class="text-3xl font-extrabold text-gray-800">Order Confirmed! 🎉</h2>
+            <p class="text-gray-500 mt-2 font-medium">Order ID: #{{ order.id }}</p>
+            
+            <div class="my-8 bg-red-50 p-6 rounded-xl border border-red-100">
+                <p class="text-gray-600 font-semibold text-sm uppercase tracking-wider">Estimated Delivery Time</p>
+                <div id="countdown-timer" class="text-5xl font-black text-red-600 mt-2 tracking-tight">
+                    Loading...
+                </div>
+            </div>
+
+            <div class="flex items-center justify-center space-x-3 text-gray-700 bg-gray-50 p-4 rounded-xl">
+                <span class="flex h-3 w-3 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
+                </span>
+                <span class="font-bold text-lg text-orange-600">Status: {{ order.status }}</span>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Django se delivery ka sahi time ISO format mein JavaScript ko dena
+        const deliveryTimeStr = "{{ order.estimated_delivery_time.isoformat }}";
+        const countDownDate = new Date(deliveryTimeStr).getTime();
+
+        const timerInterval = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = countDownDate - now;
+
+            // Minutes aur Seconds calculate karna
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Screen par timer update karna
+            if (distance > 0) {
+                document.getElementById("countdown-timer").innerHTML = minutes + "m " + seconds + "s";
+            } else {
+                // Agar 30 minutes poore ho jaen
+                clearInterval(timerInterval);
+                document.getElementById("countdown-timer").innerHTML = "Arriving Now! 🚀";
+                document.getElementById("countdown-timer").style.color = "#16a34a"; // Green color
+            }
+        }, 1000);
+    </script>
+
+</body>
+</html>
