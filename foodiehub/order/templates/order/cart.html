@@ -86,32 +86,32 @@
     </div>
 
     <script>
-        // Modal खोलने का फंक्शन
+
         function openPaymentModal() {
             document.getElementById('paymentModal').classList.remove('hidden');
         }
 
-        // Modal बंद करने का फंक्शन
+        
         function closePaymentModal() {
             document.getElementById('paymentModal').classList.add('hidden');
         }
 
-        // पेमेंट प्रोसेस करने का फंक्शन
+       
         function processPayment() {
-            // पहले Modal बंद करें
+            
             closePaymentModal();
 
-            // SweetAlert का शानदार Success Popup दिखाएं
+            
             Swal.fire({
                 title: 'Payment Successful! 🎉',
                 text: 'Your order is being placed...',
                 icon: 'success',
                 showConfirmButton: false,
-                timer: 2000, // 2 सेकंड तक दिखेगा
+                timer: 2000,
                 timerProgressBar: true,
                 backdrop: `rgba(0,0,0,0.6)`
             }).then(() => {
-                // 2 सेकंड बाद बैकएंड पर भेज दें जहाँ असली आर्डर जनरेट होगा
+       
                 window.location.href = "{% url 'checkout' %}";
             });
         }

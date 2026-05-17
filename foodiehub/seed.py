@@ -1,17 +1,17 @@
 import os
 import django
 
-# Django का एनवायरनमेंट सेट करना
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'foodiehub.settings')
 django.setup()
 
 from menu.models import Category, FoodItem
 
 def seed_data():
-    print("🧹 पुराने आइटम्स साफ किए जा रहे हैं...")
-    FoodItem.objects.all().delete()  # पुराने डेटा को हटाना ताकि डुप्लीकेट न बनें
+    print("🧹 ...")
+    FoodItem.objects.all().delete()
     
-    print("🚀 नए शानदार इमोजी वाले आइटम्स ऐड किए जा रहे हैं... कृपया प्रतीक्षा करें!")
+    print("🚀")
 
     menu_data = {
         "Starters & Snacks": [
@@ -65,7 +65,7 @@ def seed_data():
         category_obj, created = Category.objects.get_or_create(name=category_name)
         
         for food_name, price in items:
-            FoodItem.objects.create(  # यहाँ create इस्तेमाल किया ताकि पुराने डिलीट होने के बाद नए फ्रेश बनें
+            FoodItem.objects.create( 
                 name=food_name,
                 category=category_obj,
                 description=f"Delicious and fresh {food_name}. Best in town!",
@@ -73,7 +73,7 @@ def seed_data():
                 is_available=True
             )
             
-    print("✅ बधाई हो! इमोजी वाले सारे 100 आइटम्स डेटाबेस में सफलतापूर्वक ऐड हो गए हैं!")
+    print("✅ ")
 
 if __name__ == '__main__':
     seed_data()

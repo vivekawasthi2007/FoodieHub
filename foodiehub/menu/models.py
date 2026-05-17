@@ -12,12 +12,12 @@ class FoodItem(models.Model):
     description = models.TextField()
     price = models.DecimalField(max_digits=7, decimal_places=2)
     is_available = models.BooleanField(default=True)
-    # इमेज के लिए हम बाद में सेटिंग्स करेंगे, अभी बेसिक रखते हैं
+
 
     def __str__(self):
         return self.name
 
-# ... आपका पुराना कोड ...
+
 
 class WishlistItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
