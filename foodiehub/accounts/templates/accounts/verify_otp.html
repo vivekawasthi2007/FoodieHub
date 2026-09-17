@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Verify OTP - FoodieHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen">
+
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-96 text-center border border-gray-100">
+        <h2 class="text-3xl font-extrabold text-gray-800 mb-2">Enter OTP 🔐</h2>
+        <p class="text-gray-500 mb-6 font-medium">We've sent a 6-digit code to your email.</p>
+        
+        {% if error %}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm font-bold">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="POST" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <input type="text" name="otp" required maxlength="6" placeholder="Enter 6-digit OTP" 
+                       class="w-full border-2 border-gray-200 p-3 rounded-lg text-center text-2xl tracking-widest focus:outline-none focus:border-red-500 transition">
+            </div>
+            
+            <button type="submit" class="w-full bg-green-600 text-white font-bold text-lg py-3 rounded-lg hover:bg-green-700 shadow-md transition transform hover:-translate-y-1">
+                Verify & Continue
+            </button>
+        </form>
+        
+        <div class="mt-6">
+            <a href="{% url 'send_otp' %}" class="text-blue-500 font-bold hover:underline text-sm">Resend OTP</a>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import FoodItem, WishlistItem
+from .models import FoodItem, WishlistItem, SpecialOffer
+from order.models import CartItem  
 
+@login_required(login_url='login')
 def menu_page(request):
     query = request.GET.get('q')
     if query:
@@ -9,12 +11,20 @@ def menu_page(request):
     else:
         foods = FoodItem.objects.filter(is_available=True)
         
-
     user_wishlist = []
+    cart_item_ids = []
+    offers = SpecialOffer.objects.filter(is_active=True)
+    
     if request.user.is_authenticated:
         user_wishlist = WishlistItem.objects.filter(user=request.user).values_list('food_item_id', flat=True)
+        cart_item_ids = CartItem.objects.filter(user=request.user).values_list('food_item_id', flat=True)
 
-    return render(request, 'menu/index.html', {'foods': foods, 'user_wishlist': user_wishlist})
+    return render(request, 'menu/index.html', {
+        'foods': foods, 
+        'user_wishlist': user_wishlist,
+        'cart_item_ids': cart_item_ids,
+        'offers': offers
+    })
 
 @login_required(login_url='login')
 def toggle_wishlist(request, food_id):

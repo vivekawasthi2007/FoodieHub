@@ -27,7 +27,7 @@ class OrderMaster(models.Model):
     estimated_delivery_time = models.DateTimeField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        # 30 minute timer logic
+        
         if not self.id: 
             self.estimated_delivery_time = timezone.now() + timedelta(minutes=30)
         super().save(*args, **kwargs)
@@ -36,3 +36,10 @@ class OrderMaster(models.Model):
         return f"Order #{self.id} by {self.user.username}"
 
 # Create your models here.
+class Coupon(models.Model):
+    code = models.CharField(max_length=20, unique=True)
+    discount_amount = models.IntegerField()
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.code

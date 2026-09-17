@@ -32,11 +32,17 @@
                 </span>
                 <span class="font-bold text-lg text-orange-600">Status: {{ order.status }}</span>
             </div>
+
+            <div class="text-center mt-10 mb-2">
+                <a href="{% url 'menu' %}" class="inline-block bg-red-600 text-white text-lg font-extrabold px-8 py-4 rounded-xl shadow-lg hover:bg-red-700 hover:shadow-2xl transition transform hover:-translate-y-1">
+                    🍔 Back to Menu (Order More)
+                </a>
+            </div>
+
         </div>
     </main>
 
     <script>
-        // Django se delivery ka sahi time ISO format mein JavaScript ko dena
         const deliveryTimeStr = "{{ order.estimated_delivery_time.isoformat }}";
         const countDownDate = new Date(deliveryTimeStr).getTime();
 
@@ -44,18 +50,15 @@
             const now = new Date().getTime();
             const distance = countDownDate - now;
 
-            // Minutes aur Seconds calculate karna
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            // Screen par timer update karna
             if (distance > 0) {
                 document.getElementById("countdown-timer").innerHTML = minutes + "m " + seconds + "s";
             } else {
-                // Agar 30 minutes poore ho jaen
                 clearInterval(timerInterval);
                 document.getElementById("countdown-timer").innerHTML = "Arriving Now! 🚀";
-                document.getElementById("countdown-timer").style.color = "#16a34a"; // Green color
+                document.getElementById("countdown-timer").style.color = "#16a34a"; 
             }
         }, 1000);
     </script>

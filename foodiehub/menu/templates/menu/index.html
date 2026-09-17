@@ -5,56 +5,124 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FoodieHub - Menu</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="bg-gray-50">
 
     <nav class="bg-red-600 text-white p-4 shadow-md">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <h1 class="text-2xl font-bold">🍔 FoodieHub</h1>
-          <div class="flex items-center space-x-6">
-    <a href="{% url 'wishlist' %}" class="font-semibold hover:text-red-200">❤️ Favorites</a>
-    <a href="{% url 'profile' %}" class="font-semibold hover:text-red-200">👤 My Profile</a>
-    <a href="{% url 'cart' %}" class="font-semibold hover:text-red-200">🛒 My Cart</a>
-</div>
+            <div class="flex items-center space-x-6">
+                <a href="{% url 'wishlist' %}" class="font-semibold hover:text-red-200">❤️ Favorites</a>
+                <a href="{% url 'order_history' %}" class="font-semibold hover:text-red-200">📜 My Orders</a>
+                <a href="{% url 'profile' %}" class="font-semibold hover:text-red-200">👤 My Profile</a>
+                <a href="{% url 'cart' %}" class="font-semibold hover:text-red-200">🛒 My Cart</a>
+            </div>
         </div>
     </nav>
 
     <main class="max-w-6xl mx-auto mt-10 p-4">
-         <form method="GET" class="mb-8 flex justify-center">
-        <input type="text" name="q" placeholder="Search for pizza, burger..." class="border-2 border-gray-300 p-2 rounded-l-lg w-64 focus:outline-none focus:border-red-500">
-       <button type="submit" class="bg-red-500 text-white px-6 py-2 rounded-r-lg font-bold">Search</button>
-       </form>
+        {% if offers %}
+        <div class="mb-10">
+            <h3 class="text-xl font-extrabold text-gray-800 mb-4">🔥 Today's Special Offers</h3>
+            <div class="flex space-x-6 overflow-x-auto pb-4 px-2" style="scrollbar-width: none;">
+                {% for offer in offers %}
+                <div class="flex flex-col items-center cursor-pointer flex-shrink-0 transform transition hover:scale-105" 
+                    onclick="showOffer('{{ offer.title }}', '{{ offer.description|escapejs }}', '{{ offer.price }}', '{{ offer.image_url }}', '{% if offer.food_item %}{% url 'add_to_cart' offer.food_item.id %}{% else %}{% url 'cart' %}{% endif %}')">
+                    <div class="w-20 h-20 rounded-full p-[3px] bg-gradient-to-tr from-yellow-400 via-red-500 to-fuchsia-600 shadow-md">
+                        <img src="{{ offer.image_url }}" class="w-full h-full rounded-full border-2 border-white object-cover">
+                    </div>
+                    <span class="text-sm font-bold mt-2 text-gray-700">{{ offer.title|truncatechars:12 }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <form method="GET" class="mb-8 flex justify-center">
+            <input type="text" name="q" placeholder="Search for pizza, burger..." class="border-2 border-gray-300 p-2 rounded-l-lg w-64 focus:outline-none focus:border-red-500">
+            <button type="submit" class="bg-red-500 text-white px-6 py-2 rounded-r-lg font-bold">Search</button>
+        </form>
+        
         <h2 class="text-3xl font-extrabold text-gray-800 mb-8 text-center">Our Delicious Menu</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             {% for item in foods %}
             <div class="bg-white rounded-lg shadow-lg p-5 border border-gray-100">
                 <div class="flex justify-between items-start">
-    <h3 class="text-xl font-bold text-gray-800">{{ item.name }}</h3>
-    {% if user.is_authenticated %}
-        <a href="{% url 'toggle_wishlist' item.id %}" class="text-2xl hover:scale-125 transition transform">
-            {% if item.id in user_wishlist %}
-                ❤️
-            {% else %}
-                🤍
-            {% endif %}
-        </a>
-    {% endif %}
-</div>
+                    <h3 class="text-xl font-bold text-gray-800">{{ item.name }}</h3>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'toggle_wishlist' item.id %}" class="text-2xl hover:scale-125 transition transform">
+                            {% if item.id in user_wishlist %}
+                                ❤️
+                            {% else %}
+                                🤍
+                            {% endif %}
+                        </a>
+                    {% endif %}
+                </div>
+                
                 <p class="text-sm text-gray-500 mt-2 h-10">{{ item.description }}</p>
+                
                 <div class="mt-4 flex justify-between items-center">
                     <span class="text-2xl font-extrabold text-green-600">₹{{ item.price }}</span>
 
-                    <a href="{% url 'add_to_cart' item.id %}">
-                    <button class="bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 transition">
-                     Add to Cart
-                    </button>
-                    </a>
+                    {% if item.id in cart_item_ids %}
+                        <a href="#" onclick="toggleCartAlert(event, '{% url 'add_to_cart' item.id %}', 'Removed from Cart! ❌')">
+                            <button class="bg-green-600 text-white font-bold px-4 py-2 rounded shadow hover:bg-green-700 transition">
+                                Added ✓ (Remove)
+                            </button>
+                        </a>
+                    {% else %}
+                        <a href="#" onclick="toggleCartAlert(event, '{% url 'add_to_cart' item.id %}', 'Added to Cart! 🛒')">
+                            <button class="bg-red-500 text-white font-bold px-4 py-2 rounded shadow hover:bg-red-600 transition">
+                                Add to Cart
+                            </button>
+                        </a>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
-            </div>
+        </div>
     </main>
 
+    <script>
+        function toggleCartAlert(event, redirectUrl, message) {
+            event.preventDefault(); 
+            Swal.fire({
+                title: message,
+                icon: 'info',
+                showConfirmButton: false,
+                timer: 800, 
+                timerProgressBar: true,
+                position: 'center',
+                backdrop: `rgba(0,0,0,0.3)`
+            }).then(() => {
+                window.location.href = redirectUrl;
+            });
+        }
+
+        function showOffer(title, description, price, imageUrl, addToCartUrl) {
+            Swal.fire({
+                title: title,
+                html: `
+                    <p class="text-gray-600 mb-2">${description}</p>
+                    <div class="text-2xl font-extrabold text-green-600 mb-4">₹${price}</div>
+                    <a href="#" onclick="toggleCartAlert(event, '${addToCartUrl}', 'Added to Cart! 🛒')">
+                        <button class="bg-red-500 text-white font-bold px-6 py-2 rounded-lg shadow hover:bg-red-600 transition">
+                            Add to Cart
+                        </button>
+                    </a>
+                `,
+                imageUrl: imageUrl,
+                imageWidth: 400,
+                imageHeight: 220,
+                imageAlt: title,
+                showConfirmButton: false,
+                showCloseButton: true,
+                backdrop: `rgba(0,0,0,0.8)`
+            });
+        }
+    </script>
 </body>
 </html>
